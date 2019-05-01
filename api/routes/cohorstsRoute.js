@@ -28,6 +28,26 @@ router.get('/:id', (req, res) => {
 		});
 });
 
+// [GET] /api/cohorts/:id/students
+// 1 - returns all students
+// 2 - for the cohort with the specified id.
+// select * from students where cohort_id = 2
+
+router.get('/:id/students', (req, res) => {
+	db('students')
+		.where({ cohort_id: req.params.id })
+		.then((studentsInCohort) => {
+			if (studentsInCohort) {
+				res.status(200).json(studentsInCohort);
+			} else {
+				res.status(404).json({ error: 'There are no students in the specified ID cohort.' });
+			}
+		})
+		.catch((err) => {
+			res.status(500).json({ error: 'The information could not be retrieved.' });
+		});
+});
+
 router.post('/', (req, res) => {
 	if (!req.body.name) {
 		res.status(400).json({ error: 'Please provide a name for a new cohort' });
