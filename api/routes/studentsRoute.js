@@ -12,9 +12,25 @@ router.get('/', (req, res) => {
 		});
 });
 
+//[GET] /students/:id endpoint
+//include the cohort name
+// and remove the cohort_id fields.
+// The returned object should look like this:
+/* 
+{
+  id: 1,
+  name: 'Lambda Student',
+  cohort: 'Full Stack Web Infinity'
+}
+*/
+
+// SQl select id, name, cohorts.name as cohort from students inner join cohorts on students.cohort_id = cohorts.id where students.id =2
+
 router.get('/:id', (req, res) => {
 	db('students')
-		.where({ id: req.params.id })
+		.join('cohorts', 'students.cohort_id', 'cohorts.id')
+		.select('students.id', 'students.name', 'cohorts.name as cohort')
+		.where({ 'students.id': req.params.id })
 		.first()
 		.then((student) => {
 			if (student) {
